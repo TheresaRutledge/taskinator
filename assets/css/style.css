@@ -58,6 +58,9 @@ form .form-group {
   margin: 10px 6px 10px 0;
   flex: 1;
 }
+main{
+  display:flex;
+}
 
 footer {
   width: 100%;
@@ -66,6 +69,7 @@ footer {
   font-size: 2.4rem;
   padding: 20px;
   border-top: 5px solid var(--primary);
+  margin-top:20px;
 }
 
 .page-title {
@@ -82,6 +86,10 @@ footer {
   justify-content: center;
   margin: 25px auto;
   width: 95%;
+}
+
+main{
+  display:flex;
 }
 
 .task-list-wrapper {
@@ -227,6 +235,13 @@ footer {
 
   .task-list-wrapper {
     flex-basis: 100%;
+  }
+  section{
+    flex-basis:100%;
+  }
+
+  main{
+    display:block;
   }
 
 }
