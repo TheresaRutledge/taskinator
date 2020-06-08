@@ -1,6 +1,7 @@
-const buttonE1 = document.querySelector('#save-task');
+const formE1 = document.querySelector('#task-form');
 
 const createTaskHandler = () => {
+    event.preventDefault();
     var tasksToDoEl = document.querySelector('#tasks-to-do');
     var taskItemEl = document.createElement('li');
     taskItemEl.className = 'task-item';
@@ -8,4 +9,4 @@ const createTaskHandler = () => {
     tasksToDoEl.appendChild(taskItemEl);
 }
 
-buttonE1.addEventListener('click',createTaskHandler);
+formE1.addEventListener('submit',createTaskHandler);
