@@ -58,9 +58,7 @@ form .form-group {
   margin: 10px 6px 10px 0;
   flex: 1;
 }
-main{
-  display:flex;
-}
+
 
 footer {
   width: 100%;
@@ -235,13 +233,6 @@ main{
 
   .task-list-wrapper {
     flex-basis: 100%;
-  }
-  section{
-    flex-basis:100%;
-  }
-
-  main{
-    display:block;
   }
 
 }
