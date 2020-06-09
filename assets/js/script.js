@@ -13,6 +13,7 @@ const createTaskEl = (taskDataObj) => {
     var listItemEl = document.createElement('li');
     listItemEl.className = 'task-item';
     listItemEl.setAttribute('data-task-id', taskIdCounter);
+    listItemEl.setAttribute('draggable', 'true');
     //new div 
     var taskInfoEl = document.createElement('div');
     taskInfoEl.className = 'task-info';
@@ -57,7 +58,7 @@ const createTaskActions = (taskId) => {
     var statusSelectEl = document.createElement('select');
     statusSelectEl.className = 'select-status';
     statusSelectEl.setAttribute('data-task-id', taskId);
-    statusSelectEl.setAttribute('name', 'status change');
+    statusSelectEl.setAttribute('name', 'status-change');
     //add status selection options
     let statusChoices = ['To Do', 'In Progress', 'Completed'];
     for (i = 0; i < statusChoices.length; i++) {
@@ -175,6 +176,40 @@ const taskStatusChangedHandler = (event) => {
     }
 }
 
+//onstart of drag
+const dragTaskHandler = (event) => {
+    let taskId = event.target.getAttribute('data-task-id');
+    event.dataTransfer.setData('text/plain', taskId);
+    var getId = event.dataTransfer.getData('text/plain');
+}
+
+//allows for dropping in droppable area
+const dropZoneDragHandler = (event) => {
+    var taskListEl = event.target.closest('.task-list');
+    if (taskListEl) {
+        event.preventDefault();
+    }
+}
+//drops selected element in list hovered over
+const dropTaskHandler = (event) => {
+    let id = event.dataTransfer.getData('text/plain');
+    let draggableElement = document.querySelector(`[data-task-id='${id}']`);
+    let dropZoneEl = event.target.closest('.task-list');
+    let statusType = dropZoneEl.id;
+    let statusSelectEl = draggableElement.querySelector("select[name='status-change']");
+
+    if (statusType === 'tasks-to-do') {
+        statusSelectEl.selectedIndex = 0
+    } else if (statusType === 'tasks-in-progress') {
+        statusSelectEl.selectedIndex = 1;
+    } else if (statusType === 'tasks-completed') {
+        statusSelectEl.selectedIndex = 2;
+    }
+
+    dropZoneEl.appendChild(draggableElement);
+
+}
+
 //listener for task actions
 formEl.addEventListener('submit', taskFormHandler);
 
@@ -183,3 +218,9 @@ pageContentEl.addEventListener('click', taskButtonHandler);
 
 //listen for status updates
 pageContentEl.addEventListener('change', taskStatusChangedHandler);
+//listener for dragging
+pageContentEl.addEventListener('dragstart', dragTaskHandler)
+//listener for dragging over
+pageContentEl.addEventListener('dragover', dropZoneDragHandler);
+//listener for drop
+pageContentEl.addEventListener('drop', dropTaskHandler);
