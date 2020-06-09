@@ -188,7 +188,9 @@ const dropZoneDragHandler = (event) => {
     var taskListEl = event.target.closest('.task-list');
     if (taskListEl) {
         event.preventDefault();
+        taskListEl.setAttribute('style', 'background: rgba(68, 233, 255, 0.7); border-style: dashed;');
     }
+
 }
 //drops selected element in list hovered over
 const dropTaskHandler = (event) => {
@@ -206,8 +208,16 @@ const dropTaskHandler = (event) => {
         statusSelectEl.selectedIndex = 2;
     }
 
+    dropZoneEl.removeAttribute('style');
     dropZoneEl.appendChild(draggableElement);
 
+}
+
+const dragLeaveHandler = (event) => {
+   let taskListEl =  event.target.closest('.task-list');
+   if(taskListEl){
+       taskListEl.removeAttribute('style');
+   }
 }
 
 //listener for task actions
@@ -224,3 +234,5 @@ pageContentEl.addEventListener('dragstart', dragTaskHandler)
 pageContentEl.addEventListener('dragover', dropZoneDragHandler);
 //listener for drop
 pageContentEl.addEventListener('drop', dropTaskHandler);
+//listener for leaving drop element
+pageContentEl.addEventListener('dragleave',dragLeaveHandler);
