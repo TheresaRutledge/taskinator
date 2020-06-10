@@ -5,6 +5,7 @@ var taskIdCounter = 0; //initializes data-task-id to zero
 var tasksToDoEl = document.querySelector('#tasks-to-do');//to do tasks ul selector
 var tasksInProgressEl = document.querySelector('#tasks-in-progress');//in progress tasks ul selector
 var tasksCompletedEl = document.querySelector('#tasks-completed');// completed tasks ul selector
+var tasks = [];//holds tasks
 
 
 //Creates a new task li with name, type, edit button, delete button, and status. Adds unique ID
@@ -28,12 +29,17 @@ const createTaskEl = (taskDataObj) => {
     //append new li to ul
     tasksToDoEl.appendChild(listItemEl);
 
+    //add id to obj
+    taskDataObj.id = taskIdCounter;
+    tasks.push(taskDataObj);
+
     taskIdCounter++;
 }
 
 
 //creates the task actions (edit, delete, status) to be appended to li
 const createTaskActions = (taskId) => {
+  
     //create new div
     let actionContainerEl = document.createElement('div');
     actionContainerEl.className = 'task-actions';
@@ -98,7 +104,8 @@ const taskFormHandler = () => {
         //object to hold input values
         var taskDataObj = {
             name: nameInput,
-            type: typeInput
+            type: typeInput,
+            status: 'to do'
         };
         //pass object to createTaskEl function
         createTaskEl(taskDataObj);
@@ -110,6 +117,13 @@ const completeEditTask = (taskName, taskType, taskId) => {
     let taskSelected = document.querySelector(`.task-item[data-task-id='${taskId}']`);
     taskSelected.querySelector(`h3.task-name`).textContent = taskName;
     taskSelected.querySelector('span.task-type').textContent = taskType;
+
+    for (let i=0; i < tasks.length; i++){
+        if(tasks[i].id === parseInt(taskId)){
+            tasks[i].name = taskName;
+            tasks[i].type = taskType;
+        }
+    };
 
     resetForm();
     formEl.removeAttribute('data-task-id');
@@ -131,6 +145,14 @@ const deleteTask = (taskId) => {
     let taskSelected = document.querySelector(`.task-item[data-task-id='${taskId}']`);
     taskSelected.remove();
     resetForm();
+
+    var updatedTaskArr = [];
+    for (let i=0; i<tasks.length; i++){
+        if (tasks[i].id !== parseInt(taskId)){
+            updatedTaskArr.push(tasks[i])
+        }
+    }
+    tasks=updatedTaskArr
 }
 
 //edits a task
@@ -174,6 +196,12 @@ const taskStatusChangedHandler = (event) => {
     } else if (statusValue === 'completed') {
         tasksCompletedEl.appendChild(taskSelected);
     }
+
+    for(let i=0; i<tasks.length; i++){
+        if(tasks[i].id === parseInt(taskId)){
+            tasks[i].status = statusValue;
+        }
+    }
 }
 
 //onstart of drag
@@ -208,6 +236,11 @@ const dropTaskHandler = (event) => {
         statusSelectEl.selectedIndex = 2;
     }
 
+    for (i=0; i<tasks.length; i++){
+        if (tasks[i].id === parseInt(id)){
+            tasks[i].status = statusSelectEl.value.toLowerCase();
+        }
+    }
     dropZoneEl.removeAttribute('style');
     dropZoneEl.appendChild(draggableElement);
 
