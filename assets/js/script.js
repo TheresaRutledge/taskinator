@@ -40,7 +40,7 @@ const createTaskEl = (taskDataObj) => {
 
 //creates the task actions (edit, delete, status) to be appended to li
 const createTaskActions = (taskId) => {
-  
+
     //create new div
     let actionContainerEl = document.createElement('div');
     actionContainerEl.className = 'task-actions';
@@ -119,8 +119,8 @@ const completeEditTask = (taskName, taskType, taskId) => {
     taskSelected.querySelector(`h3.task-name`).textContent = taskName;
     taskSelected.querySelector('span.task-type').textContent = taskType;
 
-    for (let i=0; i < tasks.length; i++){
-        if(tasks[i].id === parseInt(taskId)){
+    for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === parseInt(taskId)) {
             tasks[i].name = taskName;
             tasks[i].type = taskType;
         }
@@ -148,12 +148,12 @@ const deleteTask = (taskId) => {
     resetForm();
 
     var updatedTaskArr = [];
-    for (let i=0; i<tasks.length; i++){
-        if (tasks[i].id !== parseInt(taskId)){
+    for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].id !== parseInt(taskId)) {
             updatedTaskArr.push(tasks[i])
         }
     }
-    tasks=updatedTaskArr;
+    tasks = updatedTaskArr;
     saveTasks();
 }
 
@@ -199,8 +199,8 @@ const taskStatusChangedHandler = (event) => {
         tasksCompletedEl.appendChild(taskSelected);
     }
 
-    for(let i=0; i<tasks.length; i++){
-        if(tasks[i].id === parseInt(taskId)){
+    for (let i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === parseInt(taskId)) {
             tasks[i].status = statusValue;
         }
     }
@@ -239,8 +239,8 @@ const dropTaskHandler = (event) => {
         statusSelectEl.selectedIndex = 2;
     }
 
-    for (i=0; i<tasks.length; i++){
-        if (tasks[i].id === parseInt(id)){
+    for (i = 0; i < tasks.length; i++) {
+        if (tasks[i].id === parseInt(id)) {
             tasks[i].status = statusSelectEl.value.toLowerCase();
         }
     }
@@ -251,14 +251,61 @@ const dropTaskHandler = (event) => {
 }
 
 const dragLeaveHandler = (event) => {
-   let taskListEl =  event.target.closest('.task-list');
-   if(taskListEl){
-       taskListEl.removeAttribute('style');
-   }
+    let taskListEl = event.target.closest('.task-list');
+    if (taskListEl) {
+        taskListEl.removeAttribute('style');
+    }
 }
 
 const saveTasks = () => {
-    localStorage.setItem('tasks',JSON.stringify(tasks));
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+const loadTasks = () => {
+    //Gets task items from localStorage
+    tasks = localStorage.getItem('tasks');
+    if (!tasks) {
+        tasks = [];
+        return false;
+    }
+    tasks = JSON.parse(tasks);
+
+    for (let i = 0; i < tasks.length; i++) {
+        tasks[i].id = taskIdCounter;
+        let listItemEl = document.createElement('li');
+        listItemEl.className = 'task-item';
+        listItemEl.setAttribute('data-task-id', tasks[i].id);
+        listItemEl.setAttribute('draggable', 'true');
+
+        let taskInfoEl = document.createElement('div');
+        taskInfoEl.className = 'task-info';
+        taskInfoEl.innerHTML = `<h3 class='task-name'>${tasks[i].name}</h3><span class='task-type'>${tasks[i].type}</span>`;
+        listItemEl.appendChild(taskInfoEl);
+
+        let taskActionsEl = createTaskActions(tasks[i].id);
+
+        listItemEl.appendChild(taskActionsEl);
+       
+       
+
+        switch (tasks[i].status) {
+            case 'to do':
+                listItemEl.querySelector(`select[name='status-change']`).selectedIndex = 0;
+                tasksToDoEl.appendChild(listItemEl);
+                break;
+            case 'in progress':
+                listItemEl.querySelector(`select[name='status-change']`).selectedIndex = 1;
+                tasksInProgressEl.appendChild(listItemEl);
+                break;
+            case 'completed':
+                listItemEl.querySelector(`select[name='status-change']`).selectedIndex = 2;
+                tasksCompletedEl.appendChild(listItemEl);
+                break;
+        }
+        taskIdCounter++;
+        console.log(listItemEl);
+    }
+
 }
 
 //listener for task actions
@@ -276,4 +323,4 @@ pageContentEl.addEventListener('dragover', dropZoneDragHandler);
 //listener for drop
 pageContentEl.addEventListener('drop', dropTaskHandler);
 //listener for leaving drop element
-pageContentEl.addEventListener('dragleave',dragLeaveHandler);
+pageContentEl.addEventListener('dragleave', dragLeaveHandler);
