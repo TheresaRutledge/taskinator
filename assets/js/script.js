@@ -32,6 +32,7 @@ const createTaskEl = (taskDataObj) => {
     //add id to obj
     taskDataObj.id = taskIdCounter;
     tasks.push(taskDataObj);
+    saveTasks();
 
     taskIdCounter++;
 }
@@ -124,7 +125,7 @@ const completeEditTask = (taskName, taskType, taskId) => {
             tasks[i].type = taskType;
         }
     };
-
+    saveTasks();
     resetForm();
     formEl.removeAttribute('data-task-id');
 
@@ -152,7 +153,8 @@ const deleteTask = (taskId) => {
             updatedTaskArr.push(tasks[i])
         }
     }
-    tasks=updatedTaskArr
+    tasks=updatedTaskArr;
+    saveTasks();
 }
 
 //edits a task
@@ -202,6 +204,7 @@ const taskStatusChangedHandler = (event) => {
             tasks[i].status = statusValue;
         }
     }
+    saveTasks();
 }
 
 //onstart of drag
@@ -241,6 +244,7 @@ const dropTaskHandler = (event) => {
             tasks[i].status = statusSelectEl.value.toLowerCase();
         }
     }
+    saveTasks();
     dropZoneEl.removeAttribute('style');
     dropZoneEl.appendChild(draggableElement);
 
@@ -251,6 +255,10 @@ const dragLeaveHandler = (event) => {
    if(taskListEl){
        taskListEl.removeAttribute('style');
    }
+}
+
+const saveTasks = () => {
+    localStorage.setItem('tasks',JSON.stringify(tasks));
 }
 
 //listener for task actions
